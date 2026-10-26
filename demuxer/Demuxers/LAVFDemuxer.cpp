@@ -419,12 +419,12 @@ trynoformat:
 
     if (rtmp_prameters != nullptr)
     {
-        char buff[4100];
+        // copy into a buffer sized to fit, the parameters can be of any length
+        std::vector<char> buff(rtmp_prameters + 1, rtmp_prameters + strlen(rtmp_prameters + 1) + 2);
         char *next_token = nullptr;
         bool bSwfVerify = false;
 
-        strcpy_s(buff, rtmp_prameters + 1);
-        const char *token = strtok_s(buff, " ", &next_token);
+        const char *token = strtok_s(buff.data(), " ", &next_token);
         while (token)
         {
             for (size_t i = 0; i < _countof(rtmpParametersTranslate); i++)
