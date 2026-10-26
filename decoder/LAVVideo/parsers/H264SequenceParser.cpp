@@ -40,6 +40,10 @@ HRESULT CH264SequenceParser::ParseNALs(const BYTE *buffer, size_t buflen, int na
 
     while (nalu.ReadNext())
     {
+        // skip NALs too short to hold the NAL header
+        if (nalu.GetDataLength() < 1)
+            continue;
+
         const BYTE *data = nalu.GetDataBuffer() + 1;
         const size_t len = nalu.GetDataLength() - 1;
         if (nalu.GetType() == NALU_TYPE_SPS)

@@ -539,6 +539,7 @@ HRESULT CLAVOutputPin::DeliverPacket(Packet *pPacket)
         CMediaType pmt = *(pPacket->pmt);
         m_mts.clear();
         m_mts.push_back(pmt);
+        DeleteMediaType(pPacket->pmt);
         pPacket->pmt = nullptr;
 
         SetMediaType(&pmt);

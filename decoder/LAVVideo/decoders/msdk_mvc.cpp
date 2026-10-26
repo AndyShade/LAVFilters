@@ -159,9 +159,9 @@ void CDecMSDKMVC::DestroyDecoder(bool bFull)
     }
 
     // delete MVC sequence buffers
-    SAFE_DELETE(m_mfxExtMVCSeq.View);
-    SAFE_DELETE(m_mfxExtMVCSeq.ViewId);
-    SAFE_DELETE(m_mfxExtMVCSeq.OP);
+    SAFE_ARRAY_DELETE(m_mfxExtMVCSeq.View);
+    SAFE_ARRAY_DELETE(m_mfxExtMVCSeq.ViewId);
+    SAFE_ARRAY_DELETE(m_mfxExtMVCSeq.OP);
 
     m_nMP4NALUSize = 0;
 
@@ -233,9 +233,9 @@ STDMETHODIMP CDecMSDKMVC::InitDecoder(AVCodecID codec, const CMediaType *pmt, co
 STDMETHODIMP CDecMSDKMVC::AllocateMVCExtBuffers()
 {
     mfxU32 i;
-    SAFE_DELETE(m_mfxExtMVCSeq.View);
-    SAFE_DELETE(m_mfxExtMVCSeq.ViewId);
-    SAFE_DELETE(m_mfxExtMVCSeq.OP);
+    SAFE_ARRAY_DELETE(m_mfxExtMVCSeq.View);
+    SAFE_ARRAY_DELETE(m_mfxExtMVCSeq.ViewId);
+    SAFE_ARRAY_DELETE(m_mfxExtMVCSeq.OP);
 
     m_mfxExtMVCSeq.View = new mfxMVCViewDependency[m_mfxExtMVCSeq.NumView];
     CheckPointer(m_mfxExtMVCSeq.View, E_OUTOFMEMORY);
@@ -369,7 +369,7 @@ STDMETHODIMP CDecMSDKMVC::Decode(const BYTE *buffer, int buflen, REFERENCE_TIME 
             if (nalu.GetType() == NALU_TYPE_EOSEQ || nalu.GetType() == NALU_TYPE_AUD)
                 continue;
 
-            if (nalu.GetType() == NALU_TYPE_SEI)
+            if (nalu.GetType() == NALU_TYPE_SEI && nalu.GetDataLength() > 1)
             {
                 CH264NALUnescape seiNalu(nalu.GetDataBuffer() + 1, nalu.GetDataLength() - 1);
                 ParseSEI(seiNalu.GetBuffer(), seiNalu.GetSize(), bs.TimeStamp);
