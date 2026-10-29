@@ -43,6 +43,10 @@ HRESULT CHEVCSequenceParser::ParseNALs(const BYTE *buffer, size_t buflen, int na
 
     while (nalu.ReadNext())
     {
+        // skip NALs too short to hold the 2-byte NAL header
+        if (nalu.GetDataLength() < 2)
+            continue;
+
         const BYTE *data = nalu.GetDataBuffer() + 2;
         const size_t len = nalu.GetDataLength() - 2;
         if (nalu.GetType() == HEVC_NAL_SPS)
